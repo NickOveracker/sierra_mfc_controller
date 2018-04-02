@@ -63,8 +63,8 @@ def check_health():
 def run_cmds():
 	mc_1 = MFC_Controller_One()
 	# test responsiveness
-	if mc_1.is_healthy():
-		print("We're healthy!!!")
+	#if mc_1.is_healthy():
+	#	print("We're healthy!!!")
 	# run various commands to test MFC
 	#mc_1.set_setpoint(150)
 	mc_1.read_flow()
