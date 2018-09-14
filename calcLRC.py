@@ -19,4 +19,4 @@ def calcLRC(cmnd):
     high_byte = "%X" % ((lrc&0xF0) >> 4)
     low_byte  = "%X" % (lrc&0x0F)
 
-    return(hight_byte + "" + low_byte)
+    return(high_byte + "" + low_byte)
