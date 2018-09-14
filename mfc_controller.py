@@ -16,18 +16,15 @@ class MFC_Controller():
 
 	def is_healthy(self):
 		# this serial code will be specific to your MFC
-		if ('Srnm?????\x0d\x0a\r' in self.cmd_controller("?Srnm")):
+		if ('Srnm<insert your number>' in self.cmd_controller("?Srnm")):
 			return(True)
 		else:
 			return(False)
 
 	def set_setpoint(self, setpoint):
-		rsp = "!setr" + ('%.2f' % setpoint)
-		rsp = rsp + calcLRC(rsp) + '\x0d'
-		if (self.cmd_controller("!Sinv" + ('%.3f' % setpoint)) == rsp):
-			return(True)
-		else:
-			return(False)
+		rsp = "!Setr" + str(setpoint)
+		rsp = rsp + calcLRC(rsp) + '\x0d\x0a'
+		self.ser.write(rsp.encode())
 
 	def read_flow(self):
 		self.cmd_controller("?Flow")
@@ -35,12 +32,12 @@ class MFC_Controller():
 	def cmd_controller(self, cmd):
 		lrc = calcLRC(cmd)
 		cmd = cmd + (lrc) + '\x0d\x0a'
-		print(cmd)
-		self.ser.write(cmd)
-		ser_rsp = self.ser.read(200)
-		print("Output from MFC Controller cmd with repr(): " + repr(ser_rsp))
-		print("Output from MFC Controller cmd *without* repr(): " + ser_rsp)
-		return(ser_rsp)
+		self.ser.write(cmd.encode())
+		cser_rsp = str(self.ser.read(200))
+		print(ser_rsp)
+		cprint("Output from MFC Controller cmd with repr(): " + repr(ser_rsp))
+		cprint("Output from MFC Controller cmd *without* repr(): " + ser_rsp)
+		creturn(ser_rsp)
 
 	def turn_on(self):
 		# optional depending on what initial state you want to assert
@@ -60,15 +57,16 @@ def check_health():
 		print(err_msg)
 		return(False)
 
-def run_cmds():
-	mc_1 = MFC_Controller_One()
+def run_cmds(point):
+	mc = MFC_Controller()
 	# test responsiveness
-	#if mc_1.is_healthy():
-	#	print("We're healthy!!!")
-	# run various commands to test MFC
-	#mc_1.set_setpoint(150)
-	mc_1.read_flow()
-	
+	if mc.is_healthy():
+		print("We're healthy!!!")
+	else:
+		print("Not healthy :(")
+	mc.read_flow()
+	mc.set_setpoint(point)
+
 run_cmds()
 
 
